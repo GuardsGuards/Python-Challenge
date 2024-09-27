@@ -1,29 +1,41 @@
 # Load the data
-file_path = 'election_data.csv'
-df = pd.read_csv(file_path)
+import csv
 
-# Calculate the total number of votes
-total_votes = df['Ballot ID'].nunique()
+data = csv.DictReader(open('Resources/election_data.csv'))
+my_report = open('Analysis/Poll_Analysis.txt','w')
 
-# Get a complete list of candidates who received votes
-candidates = df['Candidate'].unique()
+total = 0
+Candidates = {}
 
-# Calculate the total number of votes each candidate won
-vote_counts = df['Candidate'].value_counts()
+for row in data : 
+    total += 1
 
-# Calculate the percentage of votes each candidate won
-vote_percentages = (vote_counts / total_votes) * 100
+    Candidate = row["Candidate"]
 
-# Determine the winner of the election based on popular vote
-winner = vote_counts.idxmax()
+    if Candidate not in Candidates.keys():
+        Candidates[Candidate] = 0
 
-# Print the analysis
-print("Election Results")
-print("-------------------------")
-print(f"Total Votes: {total_votes}")
-print("-------------------------")
-for candidate in candidates:
-    print(f"{candidate}: {vote_percentages[candidate]:.3f}% ({vote_counts[candidate]})")
-print("-------------------------")
-print(f"Winner: {winner}")
-print("-------------------------")
+    Candidates[Candidate] += 1
+
+output = f'''
+Election Results
+-------------------------
+Total Votes: {total:,}
+-------------------------
+'''
+win_votes = 0
+
+
+for Can in Candidates.keys():
+    votes = Candidates[Can]
+
+    if votes > win_votes:
+        win_votes = votes
+        winner = Can
+
+    output += f'{Can}: {votes/total*100:.3f}% ({votes:,})\n'
+
+output +=  f'-----------------\nWinner: {winner} \n-----------------'
+
+print(output)
+my_report.write(output)

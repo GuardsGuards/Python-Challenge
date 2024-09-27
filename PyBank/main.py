@@ -2,6 +2,7 @@
 import csv
 
 data = csv.DictReader(open('Resources/budget_data.csv'))
+my_report = open('Analysis/Budget_Analysis.txt','w')
 
 total = 0
 months = 0
@@ -35,3 +36,4 @@ Greatest Decrease in Profits: Feb-14 ($-1825558)
 '''
 
 print(output)
+my_report.write(output)
